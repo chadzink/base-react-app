@@ -44,3 +44,9 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Link USed to help Build This Project
+* https://rapidapi.com/blog/react-context-api/
+* https://blog.logrocket.com/a-deep-dive-into-react-context-api/
+* https://medium.com/swlh/redux-context-api-for-state-management-in-react-ca9fb8e6a6dd
+* https://blog.logrocket.com/data-fetching-in-redux-apps-a-100-correct-approach-4d26e21750fc/
