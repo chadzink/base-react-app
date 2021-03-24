@@ -1,6 +1,6 @@
 import { FC, ReactElement } from "react";
 import { Link } from 'react-router-dom';
-import LogoutButton from './login-button';
+import LogoutButton from './logout-button';
 
 type NavBarProps = {
     isAuthenticated: boolean,

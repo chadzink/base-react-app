@@ -45,7 +45,7 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
-## Link USed to help Build This Project
+## Link Used to help Build This Project
 * https://rapidapi.com/blog/react-context-api/
 * https://blog.logrocket.com/a-deep-dive-into-react-context-api/
 * https://medium.com/swlh/redux-context-api-for-state-management-in-react-ca9fb8e6a6dd
