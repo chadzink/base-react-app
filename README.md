@@ -50,3 +50,6 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 * https://blog.logrocket.com/a-deep-dive-into-react-context-api/
 * https://medium.com/swlh/redux-context-api-for-state-management-in-react-ca9fb8e6a6dd
 * https://blog.logrocket.com/data-fetching-in-redux-apps-a-100-correct-approach-4d26e21750fc/
+* https://www.carlrippon.com/building-super-simple-react-form-component-typescript-basics/
+* https://www.jmfurlott.com/handling-user-session-react-context/
+* https://dev.to/alexander7161/react-context-api-with-typescript-example-j7a

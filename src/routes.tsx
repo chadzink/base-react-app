@@ -1,7 +1,8 @@
-import React, { FC, ReactElement, useContext } from 'react';
+import { FC, ReactElement, useContext } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { StartPage, AboutPage, LoginPage } from './pages';
+import { StartPage, AboutPage, LoginPage, HelpPage } from './pages';
 import { SessionContext, ISessionContextState } from './context';
+import PrivateRoute from './components/private-route';
 
 type RouterProps = {
     history: any,
@@ -12,16 +13,12 @@ const Routes : FC<RouterProps> = ({history}) : ReactElement => {
 
     return (
         <Router>
-            {session.authenticated ? (
-                <Switch>
-                    <Route path="/start" component={StartPage} />
-                    <Route path="/about" component={AboutPage} />
-                </Switch>
-            ) : (
-                <Switch>
-                    <Route path="/" component={LoginPage} />
-                </Switch>
-            )}
+            <Switch>
+                <PrivateRoute path='/start' component={StartPage} isAuthenticated={session.isAuthenticated} />
+                <PrivateRoute path='/about' component={AboutPage} isAuthenticated={session.isAuthenticated} />
+                <Route path='/help'><HelpPage /></Route>
+                <Route path='/login'><LoginPage /></Route>
+            </Switch>
         </Router>
     );
 };
