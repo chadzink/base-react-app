@@ -1,2 +1,2 @@
-export { sessionContextDefaultValues, SessionContext, default as SessionProvider } from './session-context';
-export type { ISessionState, ISessionContextState } from './types';
+export { sessionContextDefaultValues, SessionContext, default as SessionProvider } from './session';
+export type { ISessionState, ISessionContextState } from './session';

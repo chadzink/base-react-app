@@ -8,14 +8,14 @@ const defaultHeaderProps : HeaderProps = {
     title: "default",
 }
 
-const PrimaryHeader: FC<HeaderProps> = (props: HeaderProps = defaultHeaderProps): ReactElement => {
+const PublicHeader: FC<HeaderProps> = (props: HeaderProps = defaultHeaderProps): ReactElement => {
     const { title } = props;
 
     return (
         <header>
-            Secure Area: {title}
+            Public Area: {title}
         </header>
     );
 };
 
-export default PrimaryHeader;
+export default PublicHeader;
