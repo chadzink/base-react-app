@@ -1,16 +1,16 @@
 import { FC } from "react";
 import { useHistory } from 'react-router-dom';
 
-type LogoutButtonProps = {
+type ILogoutButtonProps = {
     logout: () => void;
 }
 
 
-const defaultLogoutButtonProps : LogoutButtonProps = {
+const defaultLogoutButtonProps : ILogoutButtonProps = {
     logout: () => {},
 }
 
-const LogoutButton: FC<LogoutButtonProps> = (props: LogoutButtonProps = defaultLogoutButtonProps) => {
+const LogoutButton: FC<ILogoutButtonProps> = (props: ILogoutButtonProps = defaultLogoutButtonProps) => {
     const { logout } = props;
     let history = useHistory();
 

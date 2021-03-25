@@ -1,4 +1,5 @@
 import { FC, ReactElement } from "react";
+import { Link } from 'react-router-dom';
 import { PublicLayout } from '../layouts';
 
 const HelpPage : FC = () : ReactElement => {
@@ -8,7 +9,10 @@ const HelpPage : FC = () : ReactElement => {
                 Help Page
             </h3>
             <p>
-                This page show without user authentication.
+                This page demonstrates both a different layout and a page without user authentication (public).
+            </p>
+            <p>
+                <Link to='/start'>Back to Start</Link>
             </p>
         </PublicLayout>
     );

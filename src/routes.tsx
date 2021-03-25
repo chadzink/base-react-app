@@ -4,13 +4,9 @@ import { StartPage, AboutPage, LoginPage, HelpPage } from './pages';
 import { SessionContext, ISessionContextState } from './context';
 import PrivateRoute from './components/private-route';
 
-type RouterProps = {
-    history: any,
-}
-
-const Routes : FC<RouterProps> = ({history}) : ReactElement => {
+const Routes : FC = () : ReactElement => {
     const session : ISessionContextState = useContext<ISessionContextState>(SessionContext);
-
+    
     return (
         <Router>
             <Redirect exact from="/" to="/start" />

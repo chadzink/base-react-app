@@ -2,28 +2,28 @@ import { FC, ReactElement } from "react";
 import { Link } from 'react-router-dom';
 import LogoutButton from './logout-button';
 
-type NavBarProps = {
+type INavBarProps = {
     isAuthenticated: boolean,
     logout: () => void;
 }
 
-const defaultNavBarProps : NavBarProps = {
+const defaultNavBarProps : INavBarProps = {
     isAuthenticated: false,
     logout: () => {},
 }
 
-const NavigationBar: FC<NavBarProps> = (props: NavBarProps = defaultNavBarProps): ReactElement => {
+const NavigationBar: FC<INavBarProps> = (props: INavBarProps = defaultNavBarProps): ReactElement => {
     const { isAuthenticated } = props;
 
     return (
         <nav>
-            <Link to="/start">Start</Link>
-            <Link to="/about">About</Link>
-            <Link to="/help">Help</Link>
-            { isAuthenticated
+            [<Link to="/start">Start</Link>]
+            [<Link to="/about">About</Link>]
+            [<Link to="/help">Help</Link>]
+            [{ isAuthenticated
                 ? <LogoutButton logout={props.logout} />
                 : <Link to="/login">Login</Link>
-            }
+            }]
         </nav>
     );
 };
