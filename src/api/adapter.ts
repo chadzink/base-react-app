@@ -17,10 +17,16 @@ export type IFetchRequest = {
     data: any;
 }
 
+export type ITokenSet = {
+    accessToken: string|null;
+    refreshToken: string|null;
+}
+
 export type IAdapter = {
-    fetch: (options: IFetchRequest) => Promise<IFetchResult>,
-    setTokens: (access_token:string, refresh_token:string) => Promise<void>,
-    clearTokens: () => Promise<void>,
+    fetch: (options: IFetchRequest) => Promise<IFetchResult>;
+    setTokens: (access_token:string, refresh_token:string) => Promise<void>;
+    clearTokens: () => Promise<void>;
+    getTokens: () => ITokenSet;
 }
 
 const _ApiAdapter = (): IAdapter => {
@@ -34,7 +40,7 @@ const _ApiAdapter = (): IAdapter => {
                 message: '',
                 access_token: '',
                 refresh_token: '',
-                errors: []
+                errors: [],
             }
         
             const token: string|null = localStorage.getItem(config.tokenName);
@@ -52,7 +58,7 @@ const _ApiAdapter = (): IAdapter => {
                 [dataOrParams]: options.data,
             }).then(({ data }) => {
                 result = data as IFetchResult;
-        
+
                 if (result.success && result.access_token && result.refresh_token) {
                     ApiAdapter.setTokens(result.access_token, result.refresh_token);
                 }
@@ -69,6 +75,12 @@ const _ApiAdapter = (): IAdapter => {
         clearTokens: async (): Promise<void> => {
             localStorage.removeItem(config.tokenName);
             localStorage.removeItem(config.refreshTokenName);
+        },
+        getTokens: (): ITokenSet => {
+            return {
+                accessToken: localStorage.getItem(config.tokenName),
+                refreshToken: localStorage.getItem(config.refreshTokenName),
+            };
         },
     };
 }

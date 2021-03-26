@@ -7,11 +7,11 @@ export type IRole = IEntity & {
     label: string,
 }
 
-export interface IRoles extends IEntitySingleton<IRole> {
+export interface IRolesSingleton extends IEntitySingleton<IRole> {
     // add any custom interface actions for entity
 }
 
-const _Roles = (): IRoles => {
+const _Roles = (): IRolesSingleton => {
     return {
         getAll: async () : Promise<Array<IRole>|null> => {
             const fetchRequest: IFetchRequest = {
@@ -23,12 +23,13 @@ const _Roles = (): IRoles => {
             const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
             // TO DO: Handle errors
 
+            // Map result to interface result type
             return result.data && result.data.length > 0 ? result.data as Array<IRole> : null;
         },
     };
 }
 
-const Roles: IRoles = _Roles();
+const Roles: IRolesSingleton = _Roles();
 Object.freeze(Roles);
 
 export default Roles;

@@ -1,9 +1,6 @@
 import { default as ApiAdapter, IFetchResult, IFetchRequest } from '../adapter';
 import { IEntity, IEntitySingleton } from './base-entity';
 
-const USER_LOGIN_URL = '/auth/login';
-const USER_LOGOUT_URL = '/auth/revoke-tokens';
-const USER_CURRENT_URL = '/auth/current-user';
 const USER_ALL_URL = '/user';
 
 export type IUser = IEntity & {
@@ -30,52 +27,12 @@ export type IUser = IEntity & {
     refresh_token_exp: Date;
 }
 
-export interface IUsers extends IEntitySingleton<IUser> {
+export interface IUsersSingleton extends IEntitySingleton<IUser> {
     // custom interface actions for entity
-    login: (username: string, password: string) => Promise<IUser|null>,
-    currentTokenUser: () => Promise<IUser|null>,
-    logout: () => Promise<void>,
 }
 
-const _Users = (): IUsers => {
+const _Users = (): IUsersSingleton => {
     return {
-        login: async (username: string, password: string) : Promise<IUser|null> => {
-            const fetchRequest: IFetchRequest = {
-                url: USER_LOGIN_URL,
-                method: 'POST',
-                data: {
-                    username: username,
-                    password: password,
-                },
-            };
-
-            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
-            // TO DO: Handle errors
-            
-            return result.data && result.data.length === 1 ? result.data[0] as IUser : null;
-        },
-        logout: async () : Promise<void> => {
-            const fetchRequest: IFetchRequest = {
-                url: USER_LOGOUT_URL,
-                method: 'POST',
-                data: null,
-            };
-
-            await ApiAdapter.fetch(fetchRequest);
-            await ApiAdapter.clearTokens();
-        },
-        currentTokenUser: async () : Promise<IUser|null> => {
-            const fetchRequest: IFetchRequest = {
-                url: USER_CURRENT_URL,
-                method: 'GET',
-                data: null,
-            };
-
-            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
-            // TO DO: Handle errors
-
-            return result.data && result.data.length === 1 ? result.data[0] as IUser : null;
-        },
         getAll: async () : Promise<Array<IUser>|null> => {
             const fetchRequest: IFetchRequest = {
                 url: USER_ALL_URL,
@@ -86,12 +43,13 @@ const _Users = (): IUsers => {
             const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
             // TO DO: Handle errors
 
+            // Map result to interface result type
             return result.data && result.data.length > 0 ? result.data as Array<IUser> : null;
         },
     }
 }
 
-const Users: IUsers = _Users();
+const Users: IUsersSingleton = _Users();
 Object.freeze(Users);
 
 export default Users;

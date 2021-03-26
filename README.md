@@ -57,3 +57,5 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 * https://github.com/erikras/ducks-modular-redux
 * https://github.com/ohansemmanuel/fake-medium/tree/master/src
 * https://www.telerik.com/blogs/how-to-use-context-api-with-hooks-efficiently-while-avoiding-performance-bottlenecks
+* https://leewarrick.com/blog/the-problem-with-context/
+* https://www.freecodecamp.org/news/how-to-use-redux-in-your-react-typescript-app/

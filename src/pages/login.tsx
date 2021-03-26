@@ -1,10 +1,10 @@
-import { FC, ReactElement, useContext, useEffect } from 'react';
+import { FC, ReactElement, useContext, useEffect, memo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SessionContext, ISessionContextState } from '../context';
 import { LoginLayout } from '../layouts';
 import { LoginForm } from '../components/login';
 
-const LoginPage : FC = () : ReactElement => {
+const _LoginPage : FC = () : ReactElement => {
     const session : ISessionContextState = useContext<ISessionContextState>(SessionContext);
     const history = useHistory();
 
@@ -29,4 +29,5 @@ const LoginPage : FC = () : ReactElement => {
     );
 };
 
+const LoginPage = memo(_LoginPage);
 export default LoginPage;

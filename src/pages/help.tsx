@@ -1,8 +1,8 @@
-import { FC, ReactElement } from "react";
+import { FC, ReactElement, memo } from "react";
 import { Link } from 'react-router-dom';
 import { PublicLayout } from '../layouts';
 
-const HelpPage : FC = () : ReactElement => {
+const _HelpPage : FC = () : ReactElement => {
     return (
         <PublicLayout>
             <h3>
@@ -18,4 +18,5 @@ const HelpPage : FC = () : ReactElement => {
     );
 };
 
+const HelpPage = memo(_HelpPage);
 export default HelpPage;

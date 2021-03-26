@@ -36,7 +36,7 @@ const LoginForm : FC = () : ReactElement => {
         return (
             loginUser !== null
             && loginUser.username === username
-            && loginUser.token !== ''
+            && loginUser.access_token !== ''
         );
     };
 

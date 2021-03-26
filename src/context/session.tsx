@@ -1,41 +1,36 @@
 // primary api context for current application data
 import { createContext, useState, FC, useEffect } from "react";
-import { Users, IUser, ApiConfig } from '../api';
+import * as Api from '../api';
+
+// map api types
+type IAuthUser = Api.IAuthUser;
+type ITokenSet = Api.ITokenSet;
 
 const START_APP_URL = '/start';
 
-export type ISessionState = {
-  username: string;
-  token: string;
-  refreshToken: string;
-  roles: string[];
-};
-
 export type ISessionContextState = {
-  currentUser: ISessionState;
+  currentUser: IAuthUser|null;
   loading: boolean;
   isAuthenticated: boolean;
   appStartUrl: string,
-  authenticate: (username: string, password: string) => Promise<ISessionState>|null;
+  authenticate: (username: string, password: string) => Promise<IAuthUser>|null;
   logout: () => void;
-  checkToken: () => Promise<ISessionState>|null;
+  checkToken: () => Promise<IAuthUser>|null;
 };
 
-export const sessionEmptyUser: ISessionState = {
+export const sessionEmptyUser: IAuthUser = {
+  id: '',
   username: '',
-  token: '',
-  refreshToken: '',
+  first: '',
+  last: '',
+  email: '',
+  phone: '',
   roles: [],
+  access_token: '',
+  token_exp: null,
+  refresh_token: '',
+  refresh_token_exp: null,
 };
-
-const getSessionSateFromUser = (user: IUser|null) : ISessionState => {
-  return {
-    username: user ? user.username : sessionEmptyUser.username,
-    token: user ? user.access_token : sessionEmptyUser.token,
-    refreshToken: user ? user.refresh_token : sessionEmptyUser.refreshToken,
-    roles: sessionEmptyUser.roles,
-  } as ISessionState;
-}
 
 export const sessionContextDefaultValues = (): ISessionContextState => {
   return {
@@ -53,55 +48,51 @@ export const SessionContext = createContext<ISessionContextState>(sessionContext
 
 const SessionProvider: FC = ({ children }) => {
   const defaults = sessionContextDefaultValues();
-  const [currentUser, setCurrentUser] = useState<ISessionState>(defaults.currentUser);
+  const [currentUser, setCurrentUser] = useState<IAuthUser|null>(defaults.currentUser);
   const [loading, setLoading] = useState<boolean>(defaults.loading);
   const [isAuthenticated, setAuthenticated] = useState<boolean>(defaults.isAuthenticated);
   const [appStartUrl] = useState<string>(defaults.appStartUrl);
 
-  const authenticate = async (username: string, password: string) : Promise<ISessionState> => {
+  const authenticate = async (username: string, password: string) : Promise<IAuthUser> => {
     setLoading(true);
 
     // use Users API to login
-    const userLogin: IUser|null = await Users.login(username, password);
-
-    const newSessionUser: ISessionState = getSessionSateFromUser(userLogin);
-    setCurrentUser(newSessionUser);
-    setAuthenticated(userLogin !== null);
+    const newUser: IAuthUser|null = await Api.AuthUsers.login(username, password);
+    setCurrentUser(newUser);
+    setAuthenticated(newUser !== null);
 
     setLoading(false);
 
-    return newSessionUser;
+    return newUser ? newUser : sessionEmptyUser;
   };
 
   const logout = async () => {
     setLoading(true);
 
-    await Users.logout();
+    await Api.AuthUsers.logout();
     setCurrentUser(defaults.currentUser);
     setAuthenticated(false);
 
     setLoading(false);
   };
 
-  const checkToken = async (): Promise<ISessionState> => {
+  const checkToken = async (): Promise<IAuthUser> => {
     setLoading(true);
 
-    const userFromToken: IUser|null = await Users.currentTokenUser();
-    const newSessionUser: ISessionState = getSessionSateFromUser(userFromToken);
-    setCurrentUser(newSessionUser);
-    setAuthenticated(userFromToken !== null);
+    const newUser: IAuthUser|null = await Api.AuthUsers.currentTokenUser();
+    setCurrentUser(newUser);
+    setAuthenticated(newUser !== null);
 
     setLoading(false);
 
-    return newSessionUser;
+    return newUser ? newUser : sessionEmptyUser;
   };
 
   useEffect(() => {
       (async () => {
-        const accessToken: string|null = localStorage.getItem(ApiConfig.tokenName);
-        const refreshToken: string|null = localStorage.getItem(ApiConfig.refreshTokenName);
+        const tokens: ITokenSet = Api.ApiAdapter.getTokens();
 
-        if (accessToken !== null && refreshToken !== null) {
+        if (tokens.accessToken !== null && tokens.accessToken !== '' && tokens.refreshToken !== null && tokens.refreshToken !== '') {
           await checkToken();
         }
       })();
