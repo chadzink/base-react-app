@@ -1,76 +1,106 @@
 // primary api context for current application data
-import React, { createContext, useState, FC } from "react";
+import { createContext, useState, FC, useEffect } from "react";
+import * as Api from '../api';
 
-export type ISessionState = {
-  username: string;
-  token: string;
-  refreshToken: string;
-  roles: string[];
-};
+// map api types
+type IAuthUser = Api.IAuthUser;
+type ITokenSet = Api.ITokenSet;
+
+const START_APP_URL = '/start';
 
 export type ISessionContextState = {
-  currentUser: ISessionState;
+  currentUser: IAuthUser|null;
   loading: boolean;
   isAuthenticated: boolean;
-  authenticate: (usename: string, password: string) => Promise<ISessionState>|null;
+  appStartUrl: string,
+  authenticate: (username: string, password: string) => Promise<IAuthUser>|null;
   logout: () => void;
+  checkToken: () => Promise<IAuthUser>|null;
 };
 
-export const sessionEmptyUser: ISessionState = {
+export const sessionEmptyUser: IAuthUser = {
+  id: '',
   username: '',
-  token: '',
-  refreshToken: '',
+  first: '',
+  last: '',
+  email: '',
+  phone: '',
   roles: [],
+  access_token: '',
+  token_exp: null,
+  refresh_token: '',
+  refresh_token_exp: null,
 };
 
-export const sessionContextDefaultValues: ISessionContextState = {
+export const sessionContextDefaultValues = (): ISessionContextState => {
+  return {
     currentUser: sessionEmptyUser,
     loading: false,
     isAuthenticated: false,
-    authenticate: () => { return null; },
+    appStartUrl: START_APP_URL,
+    authenticate: () => null,
     logout: () => {},
+    checkToken: () => null,
+  }
 };
 
-export const SessionContext = createContext<ISessionContextState>(
-  sessionContextDefaultValues
-);
+export const SessionContext = createContext<ISessionContextState>(sessionContextDefaultValues());
 
 const SessionProvider: FC = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<ISessionState>(sessionContextDefaultValues.currentUser);
-  const [loading, setLoading] = useState<boolean>(sessionContextDefaultValues.loading);
-  const [isAuthenticated, setAuthenticated] = useState<boolean>(sessionContextDefaultValues.isAuthenticated);
+  const defaults = sessionContextDefaultValues();
+  const [currentUser, setCurrentUser] = useState<IAuthUser|null>(defaults.currentUser);
+  const [loading, setLoading] = useState<boolean>(defaults.loading);
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(defaults.isAuthenticated);
+  const [appStartUrl] = useState<string>(defaults.appStartUrl);
 
-  const authenticate = async (usename:string, password:string) : Promise<ISessionState> => {
+  const authenticate = async (username: string, password: string) : Promise<IAuthUser> => {
     setLoading(true);
-    //wait one sec
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    const newUser : ISessionState = {
-        username: usename,
-        token: 'dsadajkhdjkbcabjkabjkbskdjhakjs',
-        refreshToken: '1234556666',
-        roles: ['admin','power-user']
-    };
-    
+
+    // use Users API to login
+    const newUser: IAuthUser|null = await Api.AuthUsers.login(username, password);
     setCurrentUser(newUser);
-    setAuthenticated(true);
+    setAuthenticated(newUser !== null);
 
     setLoading(false);
 
-    return newUser;
+    return newUser ? newUser : sessionEmptyUser;
   };
 
   const logout = async () => {
     setLoading(true);
-    //wait one sec
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setCurrentUser(sessionContextDefaultValues.currentUser);
+
+    await Api.AuthUsers.logout();
+    setCurrentUser(defaults.currentUser);
     setAuthenticated(false);
+
     setLoading(false);
   };
 
+  const checkToken = async (): Promise<IAuthUser> => {
+    setLoading(true);
+
+    const newUser: IAuthUser|null = await Api.AuthUsers.currentTokenUser();
+    setCurrentUser(newUser);
+    setAuthenticated(newUser !== null);
+
+    setLoading(false);
+
+    return newUser ? newUser : sessionEmptyUser;
+  };
+
+  useEffect(() => {
+      (async () => {
+        const tokens: ITokenSet = Api.ApiAdapter.getTokens();
+
+        if (tokens.accessToken !== null && tokens.accessToken !== '' && tokens.refreshToken !== null && tokens.refreshToken !== '') {
+          await checkToken();
+        }
+      })();
+  }, []);
+
   return (
     <SessionContext.Provider
-      value={{currentUser, loading, isAuthenticated, authenticate, logout}}>
+      value={{currentUser, loading, isAuthenticated, appStartUrl, authenticate, logout, checkToken}}>
       {children}
     </SessionContext.Provider>
   );

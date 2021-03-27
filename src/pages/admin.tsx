@@ -1,7 +1,8 @@
-import React, { FC, ReactElement } from "react";
+import { FC, ReactElement, memo } from "react";
 import { PrimaryLayout } from '../layouts';
+import { RoleTable } from '../components/admin';
 
-const AboutPage : FC = () : ReactElement => {
+const _AdminPage : FC = () : ReactElement => {
     return (
         <PrimaryLayout>
             <h3>
@@ -10,8 +11,10 @@ const AboutPage : FC = () : ReactElement => {
             <p>
                 This page show only after authentication, but does not use the session context.
             </p>
+            <RoleTable caption="Roles loaded using redux store" ></RoleTable>
         </PrimaryLayout>
     );
 };
 
-export default AboutPage;
+const AdminPage = memo(_AdminPage);
+export default AdminPage;

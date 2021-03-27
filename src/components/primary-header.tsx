@@ -1,14 +1,14 @@
 import { FC, ReactElement } from "react";
 
-type HeaderProps = {
+type IHeaderProps = {
     title: string,
 }
 
-const defaultHeaderProps : HeaderProps = {
+const defaultHeaderProps : IHeaderProps = {
     title: "default",
 }
 
-const PrimaryHeader: FC<HeaderProps> = (props: HeaderProps = defaultHeaderProps): ReactElement => {
+const PrimaryHeader: FC<IHeaderProps> = (props: IHeaderProps = defaultHeaderProps): ReactElement => {
     const { title } = props;
 
     return (

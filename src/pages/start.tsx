@@ -1,8 +1,8 @@
-import { FC, ReactElement, useContext } from 'react';
+import { FC, ReactElement, useContext, memo } from 'react';
 import { PrimaryLayout } from '../layouts';
 import { SessionContext, ISessionContextState } from '../context';
 
-const StartPage : FC = () : ReactElement => {
+const _StartPage : FC = () : ReactElement => {
     const session : ISessionContextState = useContext<ISessionContextState>(SessionContext);
 
     return (
@@ -14,10 +14,11 @@ const StartPage : FC = () : ReactElement => {
                 Start Page Content, shows after authentication.
             </p>
             <p>
-                User Name: {session.currentUser.username}
+                User Name: {session.currentUser && session.currentUser.username}
             </p>
         </PrimaryLayout>
     );
 };
 
+const StartPage = memo(_StartPage);
 export default StartPage;
