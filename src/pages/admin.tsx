@@ -1,8 +1,8 @@
 import { FC, ReactElement, memo } from "react";
 import { PrimaryLayout } from '../layouts';
-import { RoleTable } from '../components/about';
+import { RoleTable } from '../components/admin';
 
-const _AboutPage : FC = () : ReactElement => {
+const _AdminPage : FC = () : ReactElement => {
     return (
         <PrimaryLayout>
             <h3>
@@ -16,5 +16,5 @@ const _AboutPage : FC = () : ReactElement => {
     );
 };
 
-const AboutPage = memo(_AboutPage);
-export default AboutPage;
+const AdminPage = memo(_AdminPage);
+export default AdminPage;

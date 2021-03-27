@@ -18,7 +18,7 @@ const NavigationBar: FC<INavBarProps> = (props: INavBarProps = defaultNavBarProp
     return (
         <nav>
             [<Link to="/start">Start</Link>]
-            [<Link to="/about">About</Link>]
+            [<Link to="/admin">Admin</Link>]
             [<Link to="/help">Help</Link>]
             [{ isAuthenticated
                 ? <LogoutButton logout={props.logout} />

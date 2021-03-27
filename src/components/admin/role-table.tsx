@@ -1,8 +1,6 @@
 import { FC } from "react";
-import { useSelector, shallowEqual } from "react-redux";
 
 import { IRole } from '../../api';
-import * as RoleStore from '../../state/roles';
 
 // component here
 
@@ -11,10 +9,7 @@ export type IRolesTableProps = {
 }
 
 const RolesTable: FC<IRolesTableProps> = ({ caption }: IRolesTableProps) => {
-    const roles: readonly IRole[]|null = useSelector(
-        (state: RoleStore.IRolesStoreState) => state.roles,
-        shallowEqual
-    );
+    const roles: readonly IRole[]|null = []
 
     return (
         <table cellPadding={1} cellSpacing={1} style={{width: '100%', maxWidth: 400}}>
