@@ -1,26 +1,6 @@
 import axios, { Method } from "axios";
 import config from './config';
-
-export type IFetchResult = {
-    data: Array<any>;
-    type: string;
-    success: boolean;
-    message: string;
-    access_token: string;
-    refresh_token: string;
-    errors: Array<any>;
-}
-
-export type IFetchRequest = {
-    url: string;
-    method: string;
-    data: any;
-}
-
-export type ITokenSet = {
-    accessToken: string|null;
-    refreshToken: string|null;
-}
+import { IFetchResult, IFetchRequest, ITokenSet, DEFAULT_FETCH_RESULT } from './index';
 
 export type IAdapter = {
     fetch: (options: IFetchRequest) => Promise<IFetchResult>;
@@ -33,15 +13,7 @@ const _ApiAdapter = (): IAdapter => {
     return {
         fetch: async (options: IFetchRequest): Promise<IFetchResult> => {
         
-            let result: IFetchResult = {
-                data: [],
-                type: 'GET',
-                success: false,
-                message: '',
-                access_token: '',
-                refresh_token: '',
-                errors: [],
-            }
+            let result: IFetchResult = DEFAULT_FETCH_RESULT;
         
             const token: string|null = localStorage.getItem(config.tokenName);
             const dataOrParams: string = ["GET", "DELETE"].includes(options.method) ? "params" : "data";
@@ -63,7 +35,14 @@ const _ApiAdapter = (): IAdapter => {
                     ApiAdapter.setTokens(result.access_token, result.refresh_token);
                 }
             }).catch(error => {
-                result.errors = [error];
+                // map error and assign to result
+                result.errors = error.response
+                        && error.response.data
+                        && error.response.data
+                        && error.response.data.api_errors
+                    ? error.response.data.api_errors
+                    : [];
+                options.onError(result.errors);
             });
         
             return result;

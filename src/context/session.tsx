@@ -13,7 +13,7 @@ export type ISessionContextState = {
   loading: boolean;
   isAuthenticated: boolean;
   appStartUrl: string,
-  authenticate: (username: string, password: string) => Promise<IAuthUser>|null;
+  authenticate: (username: string, password: string, onError: (errors: any[]) => void) => Promise<IAuthUser>|null;
   logout: () => void;
   checkToken: () => Promise<IAuthUser>|null;
 };
@@ -53,11 +53,11 @@ const SessionProvider: FC = ({ children }) => {
   const [isAuthenticated, setAuthenticated] = useState<boolean>(defaults.isAuthenticated);
   const [appStartUrl] = useState<string>(defaults.appStartUrl);
 
-  const authenticate = async (username: string, password: string) : Promise<IAuthUser> => {
+  const authenticate = async (username: string, password: string, onError = (errors:any[]) => {}) : Promise<IAuthUser> => {
     setLoading(true);
 
     // use Users API to login
-    const newUser: IAuthUser|null = await Api.AuthUsers.login(username, password);
+    const newUser: IAuthUser|null = await Api.AuthUsers.login(username, password, onError);
     setCurrentUser(newUser);
     setAuthenticated(newUser !== null);
 

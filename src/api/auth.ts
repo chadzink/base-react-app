@@ -1,4 +1,4 @@
-import { default as ApiAdapter, IFetchResult, IFetchRequest, ITokenSet } from './adapter';
+import { ApiAdapter, IFetchResult, IFetchRequest, ITokenSet } from './index';
 import { IEntity } from './entities/base-entity';
 
 const USER_LOGIN_URL = '/auth/login';
@@ -20,14 +20,14 @@ export type IAuthUser = IEntity & {
 }
 
 export interface IAuthUsersSingleton {
-    login: (username: string, password: string) => Promise<IAuthUser|null>,
+    login: (username: string, password: string, onError: (errors: any[]) => void) => Promise<IAuthUser|null>,
     currentTokenUser: () => Promise<IAuthUser|null>,
     logout: () => Promise<void>,
 }
 
 const _Users = (): IAuthUsersSingleton => {
     return {
-        login: async (username: string, password: string) : Promise<IAuthUser|null> => {
+        login: async (username: string, password: string, errorsCallback = (errors:any[]) => {}) : Promise<IAuthUser|null> => {
             const fetchRequest: IFetchRequest = {
                 url: USER_LOGIN_URL,
                 method: 'POST',
@@ -35,29 +35,39 @@ const _Users = (): IAuthUsersSingleton => {
                     username: username,
                     password: password,
                 },
+                onError: errorsCallback,
             };
 
             const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
-            // TO DO: Handle errors
+            
+            if (result.errors && result.errors.length) {
+                await fetchRequest.onError(result.errors);
+            }
             
             // Map result to interface result type
             return result.data && result.data.length === 1 ? result.data[0] as IAuthUser : null;
         },
-        logout: async () : Promise<void> => {
+        logout: async (errorsCallback = (errors:any[]) => {}) : Promise<void> => {
             const fetchRequest: IFetchRequest = {
                 url: USER_LOGOUT_URL,
                 method: 'POST',
                 data: null,
+                onError: errorsCallback,
             };
 
-            await ApiAdapter.fetch(fetchRequest);
+            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
+            if (result.errors && result.errors.length) {
+                fetchRequest.onError(result.errors);
+            }
+
             await ApiAdapter.clearTokens();
         },
-        currentTokenUser: async () : Promise<IAuthUser|null> => {
+        currentTokenUser: async (errorsCallback = (errors:any[]) => {}) : Promise<IAuthUser|null> => {
             const fetchRequest: IFetchRequest = {
                 url: USER_CURRENT_URL,
                 method: 'GET',
                 data: null,
+                onError: () => {},
             };
 
             const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
@@ -70,10 +80,14 @@ const _Users = (): IAuthUsersSingleton => {
                     url: USER_REFRESH_TOKEN_URL,
                     method: 'POST',
                     data: tokens,
+                    onError: errorsCallback,
                 };
 
                 const resultWithTokens: IFetchResult = await ApiAdapter.fetch(fetchRequestWithTokens);
-                // TO DO: Handle errors after token refresh did not work
+                
+                if (resultWithTokens.errors && resultWithTokens.errors.length) {
+                    fetchRequestWithTokens.onError(resultWithTokens.errors);
+                }
                 
                 return resultWithTokens.data && resultWithTokens.data.length === 1
                     ? resultWithTokens.data[0] as IAuthUser

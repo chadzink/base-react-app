@@ -6,12 +6,12 @@ const _AdminPage : FC = () : ReactElement => {
     return (
         <PrimaryLayout>
             <h3>
-                About Page
+                Admin Page
             </h3>
             <p>
                 This page show only after authentication, but does not use the session context.
             </p>
-            <RoleTable caption="Roles loaded using redux store" ></RoleTable>
+            <RoleTable caption="Roles loaded using context store" roles={[]}></RoleTable>
         </PrimaryLayout>
     );
 };

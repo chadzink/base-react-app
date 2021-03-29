@@ -1,7 +1,13 @@
-export type IApiConfig = {
-    apiRoot: string;
-    tokenName: string;
-    refreshTokenName: string;
+import { IApiConfig, IFetchResult } from './index';
+
+export const DEFAULT_FETCH_RESULT: IFetchResult = {
+    data: [],
+    type: 'GET',
+    success: false,
+    message: '',
+    access_token: '',
+    refresh_token: '',
+    errors: [],
 }
 
 const Config: IApiConfig = {

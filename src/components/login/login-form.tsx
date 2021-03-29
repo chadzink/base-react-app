@@ -29,16 +29,22 @@ const LoginForm : FC = () : ReactElement => {
         if (submitSuccess) {
             history.push(session.appStartUrl);
         }
-    };
+    }
 
     const submitForm = async (username:string, password:string) : Promise<boolean> => {
-        const loginUser = await session.authenticate(username,password);
+        const loginUser = await session.authenticate(username,password, subFormError);
         return (
             loginUser !== null
             && loginUser.username === username
             && loginUser.access_token !== ''
         );
-    };
+    }
+
+    const subFormError = async (errors: any[]) => {
+        errors.forEach(error => {
+            console.error(error);
+        });
+    }
 
     return (
         <div>

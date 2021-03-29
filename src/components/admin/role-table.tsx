@@ -6,10 +6,10 @@ import { IRole } from '../../api';
 
 export type IRolesTableProps = {
     caption: string,
+    roles: IRole[]|null,
 }
 
-const RolesTable: FC<IRolesTableProps> = ({ caption }: IRolesTableProps) => {
-    const roles: readonly IRole[]|null = []
+const RolesTable: FC<IRolesTableProps> = ({ caption, roles }: IRolesTableProps) => {
 
     return (
         <table cellPadding={1} cellSpacing={1} style={{width: '100%', maxWidth: 400}}>

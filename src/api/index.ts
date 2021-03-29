@@ -1,8 +1,8 @@
-export { default as ApiConfig } from './config';
+export { default as ApiConfig, DEFAULT_FETCH_RESULT } from './config';
 export { default as ApiAdapter } from './adapter';
 
-export type { IApiConfig } from './config';
-export type { IFetchResult, IFetchRequest, ITokenSet } from './adapter';
+export type {  } from './config';
+export type { IApiConfig, IFetchResult, IFetchRequest, ITokenSet } from './types';
 
 // start export for custom api controllers that don't map to RESTful entities
 export type { IAuthUser } from './auth';
