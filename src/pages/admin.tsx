@@ -1,6 +1,7 @@
 import { FC, ReactElement, memo } from "react";
 import { PrimaryLayout } from '../layouts';
 import { RoleTable } from '../components/admin';
+import { RolesProvider } from '../context';
 
 const _AdminPage : FC = () : ReactElement => {
     return (
@@ -11,7 +12,9 @@ const _AdminPage : FC = () : ReactElement => {
             <p>
                 This page show only after authentication, but does not use the session context.
             </p>
-            <RoleTable caption="Roles loaded using context store" roles={[]}></RoleTable>
+            <RolesProvider>
+                <RoleTable caption="Roles loaded using context store"></RoleTable>
+            </RolesProvider>
         </PrimaryLayout>
     );
 };

@@ -13,22 +13,15 @@ export interface IRolesSingleton extends IEntitySingleton<IRole> {
 
 const _Roles = (): IRolesSingleton => {
     return {
-        getAll: async (errorsCallback = (errors:any[]) => {}) : Promise<Array<IRole>|null> => {
+        getAll: async (page: number, size: number) : Promise<IFetchResult<IRole>|null> => {
             const fetchRequest: IFetchRequest = {
                 url: ROLE_ALL_URL,
                 method: 'GET',
-                data: null,
-                onError: errorsCallback,
+                data: { page, size },
+                onError: () => {},
             };
 
-            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
-            
-            if (result.errors && result.errors.length) {
-                fetchRequest.onError(result.errors);
-            }
-
-            // Map result to interface result type
-            return result.data && result.data.length > 0 ? result.data as Array<IRole> : null;
+            return await ApiAdapter.fetch<IRole>(fetchRequest);
         },
     };
 }

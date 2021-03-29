@@ -1,10 +1,12 @@
+import { IFetchResult } from '../index';
+
 export type IEntity = {
     id: string;
 }
 
-export interface IEntitySingleton<T> {
+export interface IEntitySingleton<TEntity> {
     // TO DO: Implement RESTful for role
-    getAll: () => Promise<Array<T>|null>,
+    getAll: (page: number, size: number) => Promise<IFetchResult<TEntity>|null>,
     // getById: (id:string) => Promise<T|null>,
     // add: (user:IUser) => Promise<T|null>,
     // remove: (id:string) => Promise<void>,

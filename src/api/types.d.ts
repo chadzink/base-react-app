@@ -4,9 +4,16 @@ export type IApiConfig = {
     refreshTokenName: string;
 }
 
-export type IFetchResult = {
-    data: any[];
+export type IFetchResult<TEntity> = {
+    data: TEntity[];
     type: string;
+    page_meta: {
+        page: number;
+        size: number;
+        total: number;
+        pages: number;
+        order: string;
+    };
     success: boolean;
     message: string;
     access_token: string;
