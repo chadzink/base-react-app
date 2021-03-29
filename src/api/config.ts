@@ -1,14 +1,4 @@
-import { IApiConfig, IFetchResult } from './index';
-
-export const DEFAULT_FETCH_RESULT: IFetchResult = {
-    data: [],
-    type: 'GET',
-    success: false,
-    message: '',
-    access_token: '',
-    refresh_token: '',
-    errors: [],
-}
+import { IApiConfig } from './index';
 
 const Config: IApiConfig = {
     apiRoot: 'http://localhost:44389/',

@@ -33,22 +33,15 @@ export interface IUsersSingleton extends IEntitySingleton<IUser> {
 
 const _Users = (): IUsersSingleton => {
     return {
-        getAll: async (errorsCallback = (errors:any[]) => {}) : Promise<Array<IUser>|null> => {
+        getAll: async (page: number, size: number) : Promise<IFetchResult<IUser>|null> => {
             const fetchRequest: IFetchRequest = {
                 url: USER_ALL_URL,
                 method: 'GET',
                 data: null,
-                onError: errorsCallback,
+                onError: () => {},
             };
 
-            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
-            
-            if (result.errors && result.errors.length) {
-                fetchRequest.onError(result.errors);
-            }
-
-            // Map result to interface result type
-            return result.data && result.data.length > 0 ? result.data as Array<IUser> : null;
+            return await ApiAdapter.fetch<IUser>(fetchRequest);
         },
     }
 }

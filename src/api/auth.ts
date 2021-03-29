@@ -38,7 +38,7 @@ const _Users = (): IAuthUsersSingleton => {
                 onError: errorsCallback,
             };
 
-            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
+            const result: IFetchResult<IAuthUser> = await ApiAdapter.fetch<IAuthUser>(fetchRequest);
             
             if (result.errors && result.errors.length) {
                 await fetchRequest.onError(result.errors);
@@ -55,7 +55,7 @@ const _Users = (): IAuthUsersSingleton => {
                 onError: errorsCallback,
             };
 
-            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
+            const result: IFetchResult<IAuthUser> = await ApiAdapter.fetch<IAuthUser>(fetchRequest);
             if (result.errors && result.errors.length) {
                 fetchRequest.onError(result.errors);
             }
@@ -70,7 +70,7 @@ const _Users = (): IAuthUsersSingleton => {
                 onError: () => {},
             };
 
-            const result: IFetchResult = await ApiAdapter.fetch(fetchRequest);
+            const result: IFetchResult<IAuthUser> = await ApiAdapter.fetch<IAuthUser>(fetchRequest);
             // Handle errors
             if (result.errors && result.errors.length) {
                 // first try to use the refresh token to get a new token
@@ -83,7 +83,7 @@ const _Users = (): IAuthUsersSingleton => {
                     onError: errorsCallback,
                 };
 
-                const resultWithTokens: IFetchResult = await ApiAdapter.fetch(fetchRequestWithTokens);
+                const resultWithTokens: IFetchResult<IAuthUser> = await ApiAdapter.fetch<IAuthUser>(fetchRequestWithTokens);
                 
                 if (resultWithTokens.errors && resultWithTokens.errors.length) {
                     fetchRequestWithTokens.onError(resultWithTokens.errors);

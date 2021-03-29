@@ -1,9 +1,9 @@
 import axios, { Method } from "axios";
 import config from './config';
-import { IFetchResult, IFetchRequest, ITokenSet, DEFAULT_FETCH_RESULT } from './index';
+import { IFetchResult, IFetchRequest, ITokenSet } from './index';
 
 export type IAdapter = {
-    fetch: (options: IFetchRequest) => Promise<IFetchResult>;
+    fetch: <TEntity>(options: IFetchRequest) => Promise<IFetchResult<TEntity>>;
     setTokens: (access_token:string, refresh_token:string) => Promise<void>;
     clearTokens: () => Promise<void>;
     getTokens: () => ITokenSet;
@@ -11,9 +11,24 @@ export type IAdapter = {
 
 const _ApiAdapter = (): IAdapter => {
     return {
-        fetch: async (options: IFetchRequest): Promise<IFetchResult> => {
+        fetch: async <TEntity>(options: IFetchRequest): Promise<IFetchResult<TEntity>> => {
         
-            let result: IFetchResult = DEFAULT_FETCH_RESULT;
+            let result: IFetchResult<TEntity> = {
+                data: [],
+                type: 'GET',
+                page_meta: {
+                    page: 1,
+                    size: 25,
+                    total: 0,
+                    pages: 0,
+                    order: '',
+                },
+                success: false,
+                message: '',
+                access_token: '',
+                refresh_token: '',
+                errors: [],
+            };
         
             const token: string|null = localStorage.getItem(config.tokenName);
             const dataOrParams: string = ["GET", "DELETE"].includes(options.method) ? "params" : "data";
@@ -29,7 +44,7 @@ const _ApiAdapter = (): IAdapter => {
                 } : { "Access-Control-Allow-Origin": "*" },
                 [dataOrParams]: options.data,
             }).then(({ data }) => {
-                result = data as IFetchResult;
+                result = data as IFetchResult<TEntity>;
 
                 if (result.success && result.access_token && result.refresh_token) {
                     ApiAdapter.setTokens(result.access_token, result.refresh_token);
