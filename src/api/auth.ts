@@ -22,6 +22,7 @@ export type IAuthUser = IEntity & {
 export interface IAuthUsersSingleton {
     login: (username: string, password: string, onError: (errors: any[]) => void) => Promise<IAuthUser|null>,
     currentTokenUser: () => Promise<IAuthUser|null>,
+    currentRefreshTokenUser: () => Promise<IAuthUser|null>,
     logout: () => Promise<void>,
 }
 
@@ -71,32 +72,45 @@ const _Users = (): IAuthUsersSingleton => {
             };
 
             const result: IFetchResult<IAuthUser> = await ApiAdapter.fetch<IAuthUser>(fetchRequest);
-            // Handle errors
+            
+            // Handle errors callback
             if (result.errors && result.errors.length) {
-                // first try to use the refresh token to get a new token
-                const tokens: ITokenSet = ApiAdapter.getTokens();
+                errorsCallback(result.errors);
+            }
 
-                const fetchRequestWithTokens: IFetchRequest = {
+            // Map result to interface result type
+            return result.data && result.data.length === 1 ? result.data[0] as IAuthUser : null;
+        },
+        currentRefreshTokenUser: async (errorsCallback = (errors:any[]) => {}) : Promise<IAuthUser|null> => {
+            // first try to use the refresh token to get a new token
+            const tokens: ITokenSet = ApiAdapter.getTokens();
+
+            if (
+                tokens.accessToken !== null
+                && tokens.accessToken !== ''
+                && tokens.refreshToken !== null
+                && tokens.refreshToken !== ''
+            ) {
+                const fetchRequest: IFetchRequest = {
                     url: USER_REFRESH_TOKEN_URL,
                     method: 'POST',
                     data: tokens,
-                    onError: errorsCallback,
+                    onError: () => {},
                 };
 
-                const resultWithTokens: IFetchResult<IAuthUser> = await ApiAdapter.fetch<IAuthUser>(fetchRequestWithTokens);
-                
-                if (resultWithTokens.errors && resultWithTokens.errors.length) {
-                    fetchRequestWithTokens.onError(resultWithTokens.errors);
+                const result: IFetchResult<IAuthUser> = await ApiAdapter.fetch<IAuthUser>(fetchRequest);
+
+                // Handle errors callback
+                if (result.errors && result.errors.length) {
+                    errorsCallback(result.errors);
                 }
                 
-                return resultWithTokens.data && resultWithTokens.data.length === 1
-                    ? resultWithTokens.data[0] as IAuthUser
-                    : null;
+                // Map result to interface result type
+                return result.data && result.data.length === 1 ? result.data[0] as IAuthUser : null;
             }
-            // Check for errors
-            // Map result to interface result type
-            return result.data && result.data.length === 1 ? result.data[0] as IAuthUser : null;
-        }
+            
+            return null;
+        },
     }
 }
 
