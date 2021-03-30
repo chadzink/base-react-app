@@ -1,7 +1,8 @@
-import { ApiAdapter, IFetchResult, IFetchRequest } from '../index';
-import { IEntity, IEntitySingleton } from './base-entity';
+import { IFetchResult, IFetchRequest, ApiAdapter } from '../index';
+import { IEntity, IEntitySingleton, CommonRestMixin } from './base-entity';
 
 const USER_ALL_URL = '/user';
+const USER_RESTORE_URL = '/role/restore';
 
 export type IUser = IEntity & {
     username: string;
@@ -29,15 +30,24 @@ export type IUser = IEntity & {
 
 export interface IUsersSingleton extends IEntitySingleton<IUser> {
     // custom interface actions for entity
+    restore: (id: string) => Promise<IFetchResult<IUser>|null>,
 }
 
 const _Users = (): IUsersSingleton => {
+    const restMixin: IEntitySingleton<IUser> = CommonRestMixin<IUser>(USER_ALL_URL);
+
     return {
-        getAll: async (page: number, size: number) : Promise<IFetchResult<IUser>|null> => {
+        all: restMixin.all,
+        page: restMixin.page,
+        find: restMixin.find,
+        add: restMixin.add,
+        remove: restMixin.remove,
+        update: restMixin.update,
+        restore: async (id:string) : Promise<IFetchResult<IUser>|null> => {
             const fetchRequest: IFetchRequest = {
-                url: USER_ALL_URL,
-                method: 'GET',
-                data: null,
+                url: `${USER_RESTORE_URL}/${id}`,
+                method: 'PUT',
+                data: {},
                 onError: () => {},
             };
 
