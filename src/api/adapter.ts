@@ -40,8 +40,8 @@ const _ApiAdapter = (): IAdapter => {
                 method: options.method as Method,
                 headers: token ? {
                     "Authorization": `Bearer ${token}`,
-                    "Access-Control-Allow-Origin": "*",
-                } : { "Access-Control-Allow-Origin": "*" },
+                    "Access-Control-Allow-Origin": config.corsUrls,
+                } : { "Access-Control-Allow-Origin": config.corsUrls },
                 [dataOrParams]: options.data,
             }).then(({ data }) => {
                 result = data as IFetchResult<TEntity>;

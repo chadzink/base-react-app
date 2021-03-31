@@ -2,6 +2,7 @@ export type IApiConfig = {
     apiRoot: string;
     tokenName: string;
     refreshTokenName: string;
+    corsUrls: string;
 }
 
 export type IFetchResult<TEntity> = {
