@@ -1,19 +1,12 @@
-import { FC, ReactElement, useContext, useEffect, memo } from 'react';
-import { useHistory } from 'react-router-dom';
+import { FC, ReactElement, useContext, memo } from 'react';
+import { Link } from 'react-router-dom';
+
 import { SessionContext, ISessionContextState } from '../context';
 import { LoginLayout } from '../layouts';
 import { LoginForm } from '../components/login';
 
 const _LoginPage : FC = () : ReactElement => {
     const session : ISessionContextState = useContext<ISessionContextState>(SessionContext);
-    const history = useHistory();
-
-    useEffect(() => {
-        // check if the user was redirect to this by the router, but the current user is authenticated
-        if (!session.loading && session.isAuthenticated) {
-            history.push(session.appStartUrl);
-        }
-    }, [session, history]);
 
     return (
         <LoginLayout>
@@ -23,6 +16,9 @@ const _LoginPage : FC = () : ReactElement => {
                 <>
                     <p>Your user is not authenticated. Please use the login form to authenticate your user information.</p>
                     <LoginForm />
+                    <p>
+                        <Link to='/help'>Get Help</Link>
+                    </p>
                 </>
             )}
         </LoginLayout>

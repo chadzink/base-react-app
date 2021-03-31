@@ -1,5 +1,11 @@
-import { IFetchResult, IFetchRequest, ApiAdapter } from '../index';
-import { IEntity, IEntitySingleton, CommonRestMixin } from './base-entity';
+import {
+    IEntity,
+    IEntitySingleton,
+    IPagedEntitySingleton,
+    IRestoreEntitySingleton,
+    RestfulMixin,
+    PagingMixin,
+    RestorableMixin } from './base-entity';
 
 const USER_ALL_URL = '/user';
 const USER_RESTORE_URL = '/role/restore';
@@ -28,31 +34,26 @@ export type IUser = IEntity & {
     refresh_token_exp: Date;
 }
 
-export interface IUsersSingleton extends IEntitySingleton<IUser> {
-    // custom interface actions for entity
-    restore: (id: string) => Promise<IFetchResult<IUser>|null>,
-}
+export interface IUsersSingleton extends 
+    IEntitySingleton<IUser>,
+    IPagedEntitySingleton<IUser>,
+    IRestoreEntitySingleton<IUser> {
+        // add any custom interface actions for entity
+    }
 
 const _Users = (): IUsersSingleton => {
-    const restMixin: IEntitySingleton<IUser> = CommonRestMixin<IUser>(USER_ALL_URL);
+    const restMixin: IEntitySingleton<IUser> = RestfulMixin<IUser>(USER_ALL_URL);
+    const pagedMixin: IPagedEntitySingleton<IUser> = PagingMixin<IUser>(USER_ALL_URL);
+    const restoreMixin: IRestoreEntitySingleton<IUser> = RestorableMixin<IUser>(USER_RESTORE_URL);
 
     return {
         all: restMixin.all,
-        page: restMixin.page,
+        page: pagedMixin.page,
         find: restMixin.find,
         add: restMixin.add,
         remove: restMixin.remove,
         update: restMixin.update,
-        restore: async (id:string) : Promise<IFetchResult<IUser>|null> => {
-            const fetchRequest: IFetchRequest = {
-                url: `${USER_RESTORE_URL}/${id}`,
-                method: 'PUT',
-                data: {},
-                onError: () => {},
-            };
-
-            return await ApiAdapter.fetch<IUser>(fetchRequest);
-        },
+        restore: restoreMixin.restore,
     }
 }
 
